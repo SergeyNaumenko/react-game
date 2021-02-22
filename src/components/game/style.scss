@@ -1,0 +1,13 @@
+.game {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1 0 auto;
+}
+
+.header, .footer {
+  flex-shrink: 0;
+}
