@@ -1,12 +1,12 @@
 import React from 'react';
 type CellProps = {
   row: number,
-  cell: number,
+  column: number,
 }
 
-const Cell = ({ row, cell }:CellProps) => {
+const Cell = ({ row, column }:CellProps) => {
 
-  const classes = `cell position_${row}_${cell}`;
+  const classes = `cell position_${row}_${column}`;
 
   return (
     <div className={classes}></div>
