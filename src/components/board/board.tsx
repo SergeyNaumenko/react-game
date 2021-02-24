@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { isNumber } from 'util';
 import {
   keyLeft,
@@ -10,6 +10,10 @@ import {
 } from '../../constants';
 import Cell from '../cell';
 import Tile from '../tile';
+import {
+  getRandomIndex,
+  shiftArray,
+} from '../../utils/utils';
 
 import './style.scss';
 
@@ -41,16 +45,12 @@ const Board = () => {
     }) 
   }
 
-  const getRandomIndex = (max: number) => {
-    return Math.floor(Math.random() * Math.floor(max));
-  }
-
   const handleKeyDown = (event:any) => {
     const { keyCode } = event;
-    
     switch (keyCode) {
       case keyLeft: {
         console.log('left');
+        setTiles(shiftArray(tiles, 'left'));
         break;
       }
       case keyUp: {
@@ -67,7 +67,7 @@ const Board = () => {
       }
     }
     addTile();
-  }
+  };
   
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -75,7 +75,7 @@ const Board = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     }
-  }, []);
+  }, [tiles]);
 
   const cellsView = cells.map((row, rowIndex) => {
     return row.map((_, cellIndex) => {
