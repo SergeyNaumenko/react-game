@@ -1,13 +1,13 @@
 import './style.scss';
+import { TileType } from '../../types';
 
 type TileProps = {
-  number: number | null,
-  row: number,
-  column: number,
+  tile: TileType
 }
-const Tile = ({number, row, column}: TileProps) => {
-  const classes = `tile position_${row}_${column} color${number}`;
-  const displayValue = number || '';
+const Tile = ({tile}: TileProps) => {
+  const { key, row, column, value, isVisible } = tile;
+  const classes = `tile position_${row}_${column} color${value}`;
+  const displayValue = value || '';
   return (
     <div className={classes}>
       <span>{displayValue}</span>

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { isNumber } from 'util';
+import { isNumber, isNull } from 'util';
 import {
   keyLeft,
   keyUp,
@@ -12,37 +12,46 @@ import Cell from '../cell';
 import Tile from '../tile';
 import {
   getRandomIndex,
-  shiftArray,
 } from '../../utils/utils';
 
 import './style.scss';
+import { TileType } from '../../types';
 
 const Board = () => {
   const boardSize = 4;
-  const board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null))
-  const cells = board;
-  const testTiles = Array(boardSize ** 2).fill(null);
-  const [tiles, setTiles] = useState(testTiles);
+  const cells = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
+  const [board, setBoard] = useState(cells);
+  const [tiles, setTiles] = useState<TileType[]>([]);
 
   const addTile = () => {
     setTiles((tiles) => {
-      const nullIndexes = tiles.map((value, index) => !value ? index : null)
-                              .filter((value) => value != null);
+      console.log(tiles)
+      const nullIndexes = board.flat()
+                            .map((value, index) => isNull(value) ? index : null)
+                            .filter((value) => value != null);
 
       if (nullIndexes.length) {
         const randIndex = nullIndexes[getRandomIndex(nullIndexes.length)];
         if (isNumber(randIndex)) {
-          if (randIndex === 0) return [2, ...tiles.slice(1)]
-          if (randIndex === tiles.length - 1) return [...tiles.slice(0, randIndex), 2];
-          return [
-            ...tiles.slice(0, randIndex),
-            2, 
-            ...tiles.slice(randIndex + 1)
-          ]
+          console.log(randIndex)
+          const row = Math.trunc(randIndex / boardSize);
+          const column = randIndex % boardSize;
+          const newTile = createTile(2, row, column);
+          return [...tiles, newTile];
         }
       }
       return tiles;                        
     }) 
+  }
+
+  const createTile = (value:number, row:number, column:number) => {
+    return {
+      key: new Date().getTime(),
+      row,
+      column,
+      value,
+      isVisible: true,
+    }
   }
 
   const handleKeyDown = (event:any) => {
@@ -50,7 +59,7 @@ const Board = () => {
     switch (keyCode) {
       case keyLeft: {
         console.log('left');
-        setTiles(shiftArray(tiles, 'left'));
+        
         break;
       }
       case keyUp: {
@@ -84,12 +93,9 @@ const Board = () => {
     });
   })
 
-  const tilesView = tiles.map((value, index) => {
-    if (value) {
-      const row = Math.trunc(index / boardSize);
-      const column = index % boardSize;
-      const key = boardSize * row + column; 
-      return <Tile key={key} number={value} row={row} column={column}/>
+  const tilesView = tiles.map((tile, index) => {
+    if (!isNull(tile)) {
+      return <Tile key={tile.key} tile={tile} />;
     }
     return null;
   });
