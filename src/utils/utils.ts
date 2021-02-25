@@ -4,8 +4,6 @@ const getRandomIndex = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-
-
 const createMatrix = (array: (React.FC | null)[], size: number) => {
   const matrix = [];
   for (let i = 0; i < array.length; i += size) {

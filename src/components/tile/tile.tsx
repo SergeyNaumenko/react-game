@@ -6,7 +6,8 @@ type TileProps = {
 }
 const Tile = ({tile}: TileProps) => {
   const { key, row, column, value, isVisible } = tile;
-  const classes = `tile position_${row}_${column} color${value}`;
+  const visible = isVisible ? 'visible' : '';
+  const classes = `tile position_${row}_${column} color${value} ${visible}`;
   const displayValue = value || '';
   return (
     <div className={classes}>
