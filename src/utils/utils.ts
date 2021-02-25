@@ -1,24 +1,23 @@
 import { isNull, isNumber } from "util";
+import Tile from "../components/tile";
 import { BoardType, TileType } from '../types';
 
 const getRandomIndex = (max: number) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-const shiftRow = (toLeft: boolean, matrix: (number)[][], tiles: TileType[]) => {
-
-}
-
-const shiftMatrix = (direction: string, board: BoardType) => {
-  console.log('shift matrix')
-  const { matrix, tiles } = board;
-
+const shiftRow = (toLeft: boolean, matrix: (number|null)[][], tiles: TileType[]) => {
   const matrixSize = matrix.length;
   const newMatrix = [];
   const newTiles = tiles.map((tile) => Object.assign({}, tile));
   
   for (let rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
-    newMatrix.push([...matrix[rowIndex]]);
+    
+    if(!toLeft) {
+      newMatrix.push([...matrix[rowIndex]].reverse());
+    } else {
+      newMatrix.push([...matrix[rowIndex]]);
+    }
     
     for (let i = 0; i < matrixSize - 1; i++) {
       for(let j = i + 1; j < matrixSize; j++) {
@@ -32,7 +31,7 @@ const shiftMatrix = (direction: string, board: BoardType) => {
           if (tile2Key) {
             const tileIndex = newTiles.findIndex((item) => item.key === tile2Key);
             newTiles[tileIndex].row = rowIndex;
-            newTiles[tileIndex].column = i;
+            newTiles[tileIndex].column = !toLeft ? matrixSize - i - 1 : i;
           }
           continue;
         }
@@ -51,7 +50,7 @@ const shiftMatrix = (direction: string, board: BoardType) => {
 
             newTiles[tile2Index].isVisible = false;
             newTiles[tile2Index].row = rowIndex;
-            newTiles[tile2Index].column = i;
+            newTiles[tile2Index].column = !toLeft ? matrixSize - i - 1 : i;
             
             newMatrix[rowIndex][j] = null;
             continue;
@@ -59,12 +58,46 @@ const shiftMatrix = (direction: string, board: BoardType) => {
         }
       }
     }
+
+    if (!toLeft) {
+      newMatrix[rowIndex].reverse();
+    }
   }
 
   return {
     matrix: newMatrix,
     tiles: newTiles,
-  };
+  }
+}
+
+const shiftMatrix = (direction: string, board: BoardType) => {
+  console.log('shift matrix')
+  const { matrix, tiles } = board;
+  switch (direction) {
+    case 'left': {
+      const newBoard = shiftRow(true, matrix, tiles);
+      return {
+        matrix: newBoard.matrix,
+        tiles: newBoard.tiles,
+      };
+    }
+    case 'right': {
+      const newBoard = shiftRow(false, matrix, tiles);
+      return {
+        matrix: newBoard.matrix,
+        tiles: newBoard.tiles,
+      };
+    }
+    default: {
+      return {
+        matrix,
+        tiles,
+      };
+    }
+  }
+  
+
+  
 }
 
 const removeInvisible = ({matrix, tiles}:BoardType) => {
