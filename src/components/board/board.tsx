@@ -26,34 +26,47 @@ const Board = () => {
   }
   const [board, setBoard] = useState<BoardType>(defaultBoard);
   
-  const addTile = () => {
-    setBoard((data) => {
-      const { matrix, tiles } = data;
-      const nullIndexes = matrix.flat()
-                            .map((value, index) => isNull(value) ? index : null)
-                            .filter((value) => value != null);
+  const makeAction = (direction: string) => {
+    setBoard((board) => {
+      console.log('make action')
+      const withVisibleTiles: BoardType = removeInvisible(board);
+      const shifted: BoardType = shiftMatrix(direction, withVisibleTiles);
+      const withNewTile: BoardType = addTile(shifted);
+      return {
+        matrix: withNewTile.matrix,
+        tiles: withNewTile.tiles,
+      };
+    })
+  }
 
-      if (nullIndexes.length) {
-        const randIndex = nullIndexes[getRandomIndex(nullIndexes.length)];
-        if (isNumber(randIndex)) {
-          const newBoard = matrix.map((row) => row.map((column) => column));
+  const addTile = (board: BoardType) => {
+    const { matrix, tiles } = board;
+    const nullIndexes = matrix.flat()
+                          .map((value, index) => isNull(value) ? index : null)
+                          .filter((value) => value != null);
 
-          const row = Math.trunc(randIndex / boardSize);
-          const column = randIndex % boardSize;
-          
-          const newTile = createTile(2, row, column);
-          const newTiles = [...tiles, newTile];
-          
-          newBoard[row][column] = newTile.key;
+    if (nullIndexes.length) {
+      const randIndex = nullIndexes[getRandomIndex(nullIndexes.length)];
+      if (isNumber(randIndex)) {
+        const newBoard = matrix.map((row) => row.map((column) => column));
 
-          return {
-            matrix: newBoard,
-            tiles: newTiles,
-          }
+        const row = Math.trunc(randIndex / boardSize);
+        const column = randIndex % boardSize;
+        
+        const newTile = createTile(2, row, column);
+
+        const newTiles = tiles.map((tile) => Object.assign({}, tile));
+        newTiles.push(newTile);
+        
+        newBoard[row][column] = newTile.key;
+
+        return {
+          matrix: newBoard,
+          tiles: newTiles,
         }
       }
-      return data;
-    }) 
+    }
+    return board;
   }
 
   const createTile = (value:number, row:number, column:number) => {
@@ -67,12 +80,13 @@ const Board = () => {
     }
   }
 
-  const shiftMatrix = (direction: string) => {
+  const shiftMatrix = (direction: string, board: BoardType) => {
+    console.log('shift matrix')
     const { matrix, tiles } = board;
 
     const matrixSize = matrix.length;
     const newMatrix = [];
-    const newTiles = [...tiles];
+    const newTiles = tiles.map((tile) => Object.assign({}, tile));
     
     for (let rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
       newMatrix.push([...matrix[rowIndex]]);
@@ -91,11 +105,15 @@ const Board = () => {
               newTiles[tileIndex].row = rowIndex;
               newTiles[tileIndex].column = i;
             }
+            continue;
           }
           if (!isNull(tile1Key) && !isNull(tile2Key)){
             const tile1Index = newTiles.findIndex((item) => item.key === tile1Key);
             const tile2Index = newTiles.findIndex((item) => item.key === tile2Key);
             
+            console.log(newTiles[tile1Index]);
+            console.log(newTiles[tile2Index]);
+
             if (newTiles[tile1Index].value === newTiles[tile2Index].value) {
               console.log(newTiles[tile1Index].value);
               newTiles[tile1Index].value = newTiles[tile1Index].value * 2;
@@ -107,48 +125,34 @@ const Board = () => {
               newTiles[tile2Index].column = i;
               
               newMatrix[rowIndex][j] = null;
+              continue;
             }
           }
         }
       }
     }
 
-    setBoard({
+    return {
       matrix: newMatrix,
       tiles: newTiles,
-    })
+    };
   }
 
-  const removeAndMakeVisible = () => {
-    setBoard(({matrix, tiles}) => {
-      const newTiles = [...tiles];
-      const visibleTiles = newTiles.filter((tile) => tile.isVisible);
-      
-      /*map((tile) => {
-                                const newTile = Object.assign({}, tile);
-                                console.log(newTile)
-                                if (newTile.isNew) {
-                                  newTile.isVisible = true;
-                                  newTile.isNew = false;
-                                }
-                                return newTile;
-                              });
-*/
-      return {
-        matrix,
-        tiles: [...visibleTiles],
-      };
-    })
+  const removeInvisible = ({matrix, tiles}:BoardType) => {
+    const newTiles = tiles.map((tile) => Object.assign({}, tile));
+    return {
+      matrix,
+      tiles: [...newTiles.filter((tile) => tile.isVisible)],
+    };
   }
   
 
   const handleKeyDown = (event:any) => {
-    removeAndMakeVisible();
     const { keyCode } = event;
     switch (keyCode) {
       case keyLeft: {
         console.log('left');
-        shiftMatrix('left');
+        makeAction('left');
         break;
       }
       case keyUp: {
@@ -164,7 +168,6 @@ const Board = () => {
         break;
       }
     }
-    addTile();
   };
   
   useEffect(() => {
