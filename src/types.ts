@@ -12,7 +12,10 @@ type BoardType = {
   tiles: TileType[],
 }
 
+type BoardMatrixType = (number | null)[][];
+
 export type {
   TileType,
   BoardType,
+  BoardMatrixType,
 }

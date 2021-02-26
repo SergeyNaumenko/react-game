@@ -10,12 +10,7 @@ import {
 } from '../../constants';
 import Cell from '../cell';
 import Tile from '../tile';
-import {
-  getRandomIndex,
-  removeInvisible,
-  shiftMatrix,
-  addTile,
-} from '../../utils/utils';
+import BoardActions  from '../../utils/BoardActions';
 
 import './style.scss';
 import { BoardType } from '../../types';
@@ -28,17 +23,16 @@ const Board = () => {
     tiles: [],
   }
 
-  const [board, setBoard] = useState<BoardType>(addTile(defaultBoard));
+  const [board, setBoard] = useState<BoardType>(defaultBoard);
   
   const makeAction = (direction: string) => {
-    setBoard((board) => {
+    setBoard(({matrix, tiles}) => {
       console.log('make action')
-      const withVisibleTiles: BoardType = removeInvisible(board);
-      const shifted: BoardType = shiftMatrix(direction, withVisibleTiles);
-      const withNewTile: BoardType = addTile(shifted);
+      const boardActions = new BoardActions(matrix, tiles);
+      const { matrix: newMatrix, tiles: newTiles } = boardActions.makeAction(direction);
       return {
-        matrix: withNewTile.matrix,
-        tiles: withNewTile.tiles,
+        matrix: newMatrix,
+        tiles: newTiles,
       };
     })
   }
@@ -47,21 +41,19 @@ const Board = () => {
     const { keyCode } = event;
     switch (keyCode) {
       case keyLeft: {
-        console.log('left');
         makeAction('left');
         break;
       }
       case keyUp: {
-        console.log('up')
+        makeAction('top');
         break;
       }
       case keyRight: {
-        console.log('right')
         makeAction('right');
         break;
       }
       case keyDown: {
-        console.log('down')
+        makeAction('down');
         break;
       }
     }
