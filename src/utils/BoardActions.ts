@@ -118,7 +118,6 @@ export default class BoardActions {
       column,
       value,
       isVisible: true,
-      isNew: true
     }
   }
 

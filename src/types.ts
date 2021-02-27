@@ -4,7 +4,6 @@ type TileType = {
   column: number,
   value: number,
   isVisible: boolean,
-  isNew: boolean,
 }
 
 type BoardType = {
@@ -27,9 +26,19 @@ type GameConfigsType = {
   userName: string,
 }
 
+type TileProps = {
+  tile: TileType
+}
+
+type TransitionTypes = {
+  [key:string] : any,
+}
+
 export type {
   TileType,
   BoardType,
   BoardMatrixType,
   GameConfigsType,
+  TileProps,
+  TransitionTypes,
 }
