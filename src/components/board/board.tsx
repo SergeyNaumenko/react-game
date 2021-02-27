@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { isNull } from 'util';
 import {
   keyLeft,
@@ -11,12 +11,13 @@ import {
 import Cell from '../cell';
 import Tile from '../tile';
 import BoardActions  from '../../utils/BoardActions';
-
+import ConfigContext from '../configContext';
 import './style.scss';
 import { BoardType } from '../../types';
 
 const Board = () => {
-  const boardSize = 4;
+  const { boardSize, targetScore } = useContext(ConfigContext);
+  
   const cells = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
   const defaultBoard = {
     matrix: cells,

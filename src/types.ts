@@ -14,8 +14,22 @@ type BoardType = {
 
 type BoardMatrixType = (number | null)[][];
 
+type GameConfigsType = {
+  isActiveMusic: boolean,
+  musicVolume: number,
+  isActiveSoundEffects: boolean,
+  soundEffectsVolume: number,
+
+  targetScore: number,
+  animationSpeed: number,
+  boardSize: number,
+
+  userName: string,
+}
+
 export type {
   TileType,
   BoardType,
   BoardMatrixType,
+  GameConfigsType,
 }
