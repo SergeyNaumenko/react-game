@@ -1,3 +1,5 @@
+@import './styles/colors.scss';
+
 :root {
   font-size: 10px;
 }
@@ -9,6 +11,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: $main-background-color;
 }
 
 code {
@@ -18,21 +21,4 @@ code {
 
 html, body, #root {
   height: 100vh;
-}
-
-.cell, .tile {
-  position: absolute;
-  width: 10rem;
-  height: 10rem;
-  margin: 0.5rem;
-  line-height: 9rem;
-  display: inline-block;
-  font-size: 5.5rem;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 0.7rem;
-  font-family: "Clear Sans";
-  color: #766;
-  background-color: #dcb;
 }

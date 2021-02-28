@@ -18,11 +18,12 @@ const Tile = ({tile}: TileProps) => {
   
   const { row, column, value, isVisible } = tile;
   const visible = isVisible ? 'visible' : '';
-  const classes = `tile position_${row}_${column} color${value} ${visible}`;
+  const classes = `tile position_${row}_${column} color-${value} ${visible}`;
   const displayValue = value || '';
   return (
-    <Transition in={isVisible} appear={true} timeout={300} >
+    <Transition in={isVisible} appear={true} timeout={0} >
       {(state) => (
+        <div className='tile-shadow color-'>
           <div 
             className={classes}
             style={{
@@ -31,6 +32,7 @@ const Tile = ({tile}: TileProps) => {
           }}>
             <span>{displayValue}</span>
           </div>
+        </div>
       )}
     </Transition> 
   )

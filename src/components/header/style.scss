@@ -1,0 +1,10 @@
+@import '../../styles/colors.scss';
+
+.header-config-icon {
+  fill: $common-icons-color;
+
+  &:hover {
+    cursor: pointer;
+    fill: $common-icons-color-active;
+  }
+}

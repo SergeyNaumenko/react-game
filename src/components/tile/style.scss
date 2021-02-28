@@ -1,8 +1,122 @@
+@import '../../styles/colors.scss';
+  
 .tile {
-  opacity: 0,
-}
+  opacity: 0;
+  position: absolute;
+  width: 10rem;
+  height: 10rem;
+  margin: 0.5rem;
+  line-height: 9rem;
+  display: inline-block;
+  font-size: 5.5rem;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 0.7rem;
+  font-family: "Clear Sans";
+  color: #fff;
 
+  &-front{
+    height: 9rem;
+  }
+}
 .visible {
   z-index: 3;
   opacity: 1;
+}
+
+.color-2 {
+  background-color: $tile-2;
+
+  &-shadow {
+    background-color: $tile-2-shadow;
+  }
+}
+
+.color-4 {
+  background-color: $tile-4;
+
+  &-shadow {
+    background-color: $tile-4-shadow;
+  }
+}
+
+.color-8 {
+  background-color: $tile-8;
+
+  &-shadow {
+    background-color: $tile-8-shadow;
+  }
+}
+
+.color-16 {
+  background-color: $tile-16;
+
+  &-shadow {
+    background-color: $tile-16-shadow;
+  }
+}
+
+.color-32 {
+  background-color: $tile-32;
+
+  &-shadow {
+    background-color: $tile-32-shadow;
+  }
+}
+
+.color-64 {
+  background-color: $tile-64;
+
+  &-shadow {
+    background-color: $tile-64-shadow;
+  }
+}
+
+.color-128 {
+  background-color: $tile-128;
+
+  &-shadow {
+    background-color: $tile-128-shadow;
+  }
+}
+
+.color-256 {
+  background-color: $tile-256;
+
+  &-shadow {
+    background-color: $tile-256-shadow;
+  }
+}
+
+.color-512 {
+  background-color: $tile-512;
+
+  &-shadow {
+    background-color: $tile-512-shadow;
+  }
+}
+
+.color-1024 {
+  background-color: $tile-1024;
+
+  &-shadow {
+    background-color: $tile-1024-shadow;
+  }
+}
+  
+.color-2048 {
+  background-color: $tile-2048;
+
+  &-shadow {
+    background-color: $tile-2048-shadow;
+  }
+}
+
+.color-8192 {
+  background-color: $tile-8192;
+
+  &-shadow {
+    background-color: $tile-8192-shadow;
+  }
 }
