@@ -14,6 +14,7 @@ import BoardActions  from '../../utils/BoardActions';
 import ConfigContext from '../configContext';
 import './style.scss';
 import { BoardType } from '../../types';
+import {Howl} from 'howler';
 
 const Board = () => {
   const { boardSize, targetScore } = useContext(ConfigContext);
@@ -24,9 +25,15 @@ const Board = () => {
     tiles: [],
   }
 
+  const sound = new Howl({
+    src: ['swap_effect.wav'],
+    volume: 1,
+  });
+
   const [board, setBoard] = useState<BoardType>(defaultBoard);
   
   const makeAction = (direction: string) => {
+    sound.play();
     setBoard(({matrix, tiles}) => {
       console.log('make action')
       const boardActions = new BoardActions(matrix, tiles);

@@ -1,7 +1,7 @@
 import { GameConfigsType } from './types';
 
 const defaultConfig: GameConfigsType = {
-  isActiveMusic: true,
+  isActiveMusic: false,
   musicVolume: 0.5,
   isActiveSoundEffects: true,
   soundEffectsVolume: 0.5,
