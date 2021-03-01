@@ -6,9 +6,11 @@ const defaultConfig: GameConfigsType = {
   isActiveSoundEffects: true,
   soundEffectsVolume: 0.5,
 
-  targetScore: 128,
+  targetScore: 2048,
+  targetScores: [512, 1024, 2048],
   animationSpeed: 500,
   boardSize: 4,
+  boardSizes: [3,4,5],
 
   userName: 'User1',
 }

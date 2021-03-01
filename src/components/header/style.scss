@@ -1,10 +1,20 @@
 @import '../../styles/colors.scss';
 
 .header-config-icon {
-  fill: $common-icons-color;
+  fill: $common-icon-color;
+}
+
+.header-btn {
+  width: 6rem;
+  border-radius: 50%;
+  background-color: $common-btn-color;
+  height: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.3rem solid $common-btn-border-color;
 
   &:hover {
-    cursor: pointer;
-    fill: $common-icons-color-active;
+    background-color: $common-btn-color-active;
   }
 }

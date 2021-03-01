@@ -13,7 +13,7 @@ import './style.scss';
 
 const Game = () => {
   const [config, setConfig] = useState<GameConfigsType>(defaultConfig);
-  const [isActiveConfigView, setIsActiveConfig ] = useState<boolean>(true);
+  const [isActiveConfigView, setIsActiveConfig ] = useState<boolean>(false);
   const { musicVolume, isActiveMusic } = config;
   const sound = useMemo(() => new Howl({
     src: ['melody.mp3'],
@@ -41,7 +41,11 @@ const Game = () => {
     <div className='game'>
       <ConfigContext.Provider value={config}>
         <Header onShowConfigView={handleConfigViewVisibility}/>
-        { isActiveConfigView ? <ConfigView onConfigChanged={handleConfigChange}/> : null}
+        { isActiveConfigView ? 
+          <ConfigView 
+            onConfigChanged={handleConfigChange} 
+            onModalShow={handleConfigViewVisibility}/> 
+          : null}
         <main className='main'>
             <Board/>
         </main>

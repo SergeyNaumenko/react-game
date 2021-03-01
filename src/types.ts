@@ -20,8 +20,10 @@ type GameConfigsType = {
   soundEffectsVolume: number,
 
   targetScore: number,
+  targetScores: number[],
   animationSpeed: number,
   boardSize: number,
+  boardSizes: number[],
 
   userName: string,
 }
