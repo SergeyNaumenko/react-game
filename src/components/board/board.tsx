@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback, useMemo } from 'react';
 import { isNull } from 'util';
 import {
   keyLeft,
@@ -17,64 +17,92 @@ import { BoardType } from '../../types';
 import {Howl} from 'howler';
 
 const Board = () => {
-  const { boardSize, targetScore } = useContext(ConfigContext);
+  const { 
+    boardSize, 
+    targetScore, 
+    soundEffectsVolume, 
+    isActiveSoundEffects } = useContext(ConfigContext);
   
   const cells = Array(boardSize).fill(null).map(() => Array(boardSize).fill(null));
-  const defaultBoard = {
+  
+  const sound = useMemo(() => new Howl({
+    src: ['swap_effect.wav'],
+    loop: true,
+    volume: soundEffectsVolume,
+  }), [soundEffectsVolume]);
+
+  const [board, setBoard] = useState<BoardType>({
     matrix: cells,
     tiles: [],
-  }
-
-  const sound = new Howl({
-    src: ['swap_effect.wav'],
-    volume: 1,
+    gameWasFailed: false,
+    gameWasWon: false,
   });
 
-  const [board, setBoard] = useState<BoardType>(defaultBoard);
-  
-  const makeAction = (direction: string) => {
-    sound.play();
-    setBoard(({matrix, tiles}) => {
-      console.log('make action')
-      const boardActions = new BoardActions(matrix, tiles);
-      const { matrix: newMatrix, tiles: newTiles } = boardActions.makeAction(direction);
-      return {
-        matrix: newMatrix,
-        tiles: newTiles,
-      };
-    })
-  }
 
-  const handleKeyDown = (event:any) => {
-    const { keyCode } = event;
-    switch (keyCode) {
-      case keyLeft: {
-        makeAction('left');
-        break;
+  useEffect(()=> {
+    setBoard({
+      matrix: Array(boardSize).fill(null).map(() => Array(boardSize).fill(null)),
+      tiles: [],
+      gameWasFailed: false,
+      gameWasWon: false,
+    })
+  }, [boardSize])
+
+  const makeAction = useCallback(
+    (direction: string) => {
+    
+      if (isActiveSoundEffects) {
+        sound.play();
       }
-      case keyUp: {
-        makeAction('top');
-        break;
-      }
-      case keyRight: {
-        makeAction('right');
-        break;
-      }
-      case keyDown: {
-        makeAction('down');
-        break;
+
+      const {matrix, tiles} = board;
+      const boardActions = new BoardActions(matrix, tiles, targetScore);
+      const { 
+        matrix: newMatrix, 
+        tiles: newTiles, 
+        gameWasFailed, 
+        gameWasWon,
+        tileWasMoved } = boardActions.makeAction(direction);
+
+      setBoard({
+          matrix: [...newMatrix],
+          tiles: newTiles,
+          gameWasFailed,
+          gameWasWon,
+        });
+    }
+    ,[board, targetScore, isActiveSoundEffects, sound]);
+
+  useEffect(() => {
+    function handleKeyDown(event:any) {
+      const { keyCode } = event;
+      
+      switch (keyCode) {
+        case keyLeft: {
+          makeAction('left');
+          break;
+        }
+        case keyUp: {
+          makeAction('top');
+          break;
+        }
+        case keyRight: {
+          makeAction('right');
+          break;
+        }
+        case keyDown: {
+          makeAction('down');
+          break;
+        }
       }
     }
-  };
-  
-  useEffect(() => {
+
     window.addEventListener('keydown', handleKeyDown);
     
     return () => {
-      console.log('remove listener')
       window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [board]);
+  }, [board, makeAction]);
 
   const cellsView = cells.map((row, rowIndex) => {
     return row.map((_, cellIndex) => {
@@ -83,7 +111,7 @@ const Board = () => {
     });
   })
 
-  const tilesView = board.tiles.map((tile, index) => {
+  const tilesView = board.tiles.map((tile) => {
     if (!isNull(tile)) {
       return <Tile key={tile.key} tile={tile} />;
     }
