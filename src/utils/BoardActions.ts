@@ -9,18 +9,26 @@ export default class BoardActions {
     'down': 3,
   }
 
+  private targetScore: number;
   private matrix: BoardMatrixType;
   private tiles: TileType[];
   private matrixSize: number;
   private movements: BoardMatrixType;
+  private gameWasWon: boolean;
+  private gameWasFailed: boolean;
+  private tileWasMoved: boolean;
 
-  constructor(matrix: BoardMatrixType, tiles: TileType[]) {
+  constructor(matrix: BoardMatrixType, tiles: TileType[], targetScore: number) {
+    this.targetScore = targetScore;
     this.matrix = matrix;
     this.tiles = tiles;
     this.matrixSize = matrix.length;
     this.movements = Array(this.matrixSize)
                       .fill(null)
                       .map(() => Array(this.matrixSize).fill(null));
+    this.gameWasWon = false;
+    this.gameWasFailed = false;
+    this.tileWasMoved = false;
   }
 
   private getRandomIndex = (max: number) => {
@@ -40,38 +48,59 @@ export default class BoardActions {
   }
 
   private shiftMatrixLeft = () => {
+    //console.log([...this.matrix])
     for (let row = 0; row < this.matrixSize; row++) {
       for (let i = 0; i < this.matrixSize - 1; i++) {
         for(let j = i + 1; j < this.matrixSize; j++) {
+          //console.log(`${i} ${j}`);
+
           const tile1Key = this.matrix[row][i];
           const tile2Key = this.matrix[row][j];
           
           if (isNull(tile1Key) && !isNull(tile2Key)) {
+            //console.log('move to Null cell')
             this.matrix[row][i] = tile2Key;
             this.matrix[row][j] = null;
+
             this.movements[row][i] = tile2Key;
+            this.tileWasMoved = true;
   
-            j = i + 1;
+            j = i;
+            continue;
           }
-          if (!isNull(tile1Key) && !isNull(tile2Key)){
-            const tile1Index = this.tiles.findIndex((item) => item.key === tile1Key);
-            const tile2Index = this.tiles.findIndex((item) => item.key === tile2Key);
+          if (!isNull(tile1Key) && !isNull(tile2Key)) {
+            //console.log('compare')
+            const tile1Index = this.tiles.findIndex((item) => item.key === tile1Key && item.isVisible);
+            const tile2Index = this.tiles.findIndex((item) => item.key === tile2Key && item.isVisible);
+            
+            //check algorithm
+            if (tile1Index === -1 || tile2Index === -1) {
+              console.log(`${tile1Key} ${tile2Key} ${i} ${j}`);
+              console.log(this.matrix);
+              console.log(this.tiles);
+              console.log(this.movements);
+              console.log('fired')
+              break;
+            }
             const tile1Value = this.tiles[tile1Index].value;
             const tile2Value = this.tiles[tile2Index].value;
 
             if (tile1Value === tile2Value) {
+              //console.log('merge')
               this.tiles[tile1Index].value = this.tiles[tile1Index].value * 2;
               
               this.tiles[tile2Index].isVisible = false;
-              this.movements[row][i] = this.tiles[tile2Index].key;
+              this.movements[row][i] = tile2Key;
               
               this.matrix[row][j] = null;
+              this.tileWasMoved = true;
             }
             break;
           }
         }
       }
     }
+    //console.log(this.matrix)
   }
 
   private makeMove = (direction: string) => {
@@ -111,6 +140,12 @@ export default class BoardActions {
     this.tiles = [...this.tiles.filter((tile) => tile.isVisible)];
   }
 
+  private resetMovements = () => {
+    this.movements = Array(this.matrixSize)
+                      .fill(null)
+                      .map(() => Array(this.matrixSize).fill(null));
+  }
+
   private createTile = (value:number, row:number, column:number) => {
     return {
       key: new Date().getTime(),
@@ -141,13 +176,33 @@ export default class BoardActions {
   }
 
   public makeAction = (direction: string) => {
-    this.removeInvisible();
-    this.makeMove(direction);
-    this.addTile();
+    this.tileWasMoved = false;
+    if (this.tiles.length > 0) {
+      this.removeInvisible();
+      this.resetMovements();
+      this.makeMove(direction);
+      this.checkCompleteStatus();
+      this.checkFailedStatus();
+    }
+
+    if (this.tileWasMoved || this.tiles.length === 0) {
+      this.addTile();
+    }
 
     return {
       matrix: this.matrix,
       tiles: this.tiles,
+      gameWasWon: false,
+      gameWasFailed: false,
+      tileWasMoved: this.tileWasMoved,
     }
   }
+
+  private checkCompleteStatus = () => {
+    this.gameWasWon = this.tiles.findIndex((tile) => tile.value === this.targetScore) !== -1;
+  }
+
+  private checkFailedStatus = () => {
+    this.gameWasFailed = this.matrix.flat().findIndex((cell) => isNull(cell)) === -1;
+  } 
 }

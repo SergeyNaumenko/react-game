@@ -20,6 +20,10 @@ const Tile = ({tile}: TileProps) => {
   const visible = isVisible ? 'visible' : '';
   const classes = `tile position_${row}_${column} color-${value} ${visible}`;
   const displayValue = value || '';
+  const styles = {
+    top: `${11 * row + 0.5}rem`,
+    left: `${11 * column + 0.5}rem`,
+  }
   return (
     <Transition in={isVisible} appear={true} timeout={0} >
       {(state) => (
@@ -28,7 +32,8 @@ const Tile = ({tile}: TileProps) => {
             className={classes}
             style={{
               ...defaultStyle,
-              ...transitionStyles[state]
+              ...transitionStyles[state],
+              ...styles,
           }}>
             <span>{displayValue}</span>
           </div>

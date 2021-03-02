@@ -9,6 +9,8 @@ type TileType = {
 type BoardType = {
   matrix: (number | null)[][],
   tiles: TileType[],
+  gameWasFailed: boolean,
+  gameWasWon: boolean,
 }
 
 type BoardMatrixType = (number | null)[][];
