@@ -4,7 +4,7 @@ import { TileProps, TransitionTypes, } from '../../types';
 import ConfigContext from '../configContext';
 import './style.scss';
 
-const Tile = ({tile}: TileProps) => {
+const Tile = ({tile, width, height}: TileProps) => {
   const { animationSpeed } = useContext(ConfigContext);
   const transitionStyles:TransitionTypes = {
     entering: { opacity: 0 },
@@ -20,9 +20,16 @@ const Tile = ({tile}: TileProps) => {
   const visible = isVisible ? 'visible' : '';
   const classes = `tile position_${row}_${column} color-${value} ${visible}`;
   const displayValue = value || '';
+
+  const spaceX = row === 0 ? 0 : 5;
+  const spaceY = column === 0 ? 0 : 5;
+  const fontSize = 0;
+
   const styles = {
-    top: `${11 * row + 0.5}rem`,
-    left: `${11 * column + 0.5}rem`,
+    top: `${(width + spaceX) * row}px`,
+    left: `${(height + spaceY) * column}px`,
+    width: `${width}px`,
+    height: `${height}px`,
   }
   return (
     <Transition in={isVisible} appear={true} timeout={0} >

@@ -17,6 +17,7 @@ export default class BoardActions {
   private gameWasWon: boolean;
   private gameWasFailed: boolean;
   private tileWasMoved: boolean;
+  private score: number;
 
   constructor(matrix: BoardMatrixType, tiles: TileType[], targetScore: number) {
     this.targetScore = targetScore;
@@ -29,6 +30,7 @@ export default class BoardActions {
     this.gameWasWon = false;
     this.gameWasFailed = false;
     this.tileWasMoved = false;
+    this.score = 0;
   }
 
   private getRandomIndex = (max: number) => {
@@ -64,43 +66,35 @@ export default class BoardActions {
 
             this.movements[row][i] = tile2Key;
             this.tileWasMoved = true;
+            this.score += 1;
   
             j = i;
             continue;
           }
           if (!isNull(tile1Key) && !isNull(tile2Key)) {
-            //console.log('compare')
             const tile1Index = this.tiles.findIndex((item) => item.key === tile1Key && item.isVisible);
             const tile2Index = this.tiles.findIndex((item) => item.key === tile2Key && item.isVisible);
             
-            //check algorithm
-            if (tile1Index === -1 || tile2Index === -1) {
-              console.log(`${tile1Key} ${tile2Key} ${i} ${j}`);
-              console.log(this.matrix);
-              console.log(this.tiles);
-              console.log(this.movements);
-              console.log('fired')
-              break;
-            }
             const tile1Value = this.tiles[tile1Index].value;
             const tile2Value = this.tiles[tile2Index].value;
 
             if (tile1Value === tile2Value) {
-              //console.log('merge')
-              this.tiles[tile1Index].value = this.tiles[tile1Index].value * 2;
+              const newValue = this.tiles[tile1Index].value * 2;
+              this.tiles[tile1Index].value = newValue;
               
               this.tiles[tile2Index].isVisible = false;
               this.movements[row][i] = tile2Key;
               
               this.matrix[row][j] = null;
               this.tileWasMoved = true;
+
+              this.score += newValue;
             }
             break;
           }
         }
       }
     }
-    //console.log(this.matrix)
   }
 
   private makeMove = (direction: string) => {
@@ -181,20 +175,22 @@ export default class BoardActions {
       this.removeInvisible();
       this.resetMovements();
       this.makeMove(direction);
-      this.checkCompleteStatus();
-      this.checkFailedStatus();
     }
-
+    
     if (this.tileWasMoved || this.tiles.length === 0) {
       this.addTile();
     }
-
+    
+    this.checkCompleteStatus();
+    this.checkFailedStatus();
+    
     return {
       matrix: this.matrix,
       tiles: this.tiles,
-      gameWasWon: false,
-      gameWasFailed: false,
+      gameWasWon: this.gameWasWon,
+      gameWasFailed: this.gameWasFailed,
       tileWasMoved: this.tileWasMoved,
+      score: this.score,
     }
   }
 
@@ -203,6 +199,55 @@ export default class BoardActions {
   }
 
   private checkFailedStatus = () => {
-    this.gameWasFailed = this.matrix.flat().findIndex((cell) => isNull(cell)) === -1;
+    const hasNullCells = this.matrix.flat().findIndex((cell) => isNull(cell)) > -1;
+
+    console.log('check')
+    if (hasNullCells) {
+      this.gameWasFailed = false;
+      return;
+    }
+
+    console.log('after null check')
+    for (let row = 0; row < this.matrixSize; row++) {
+      for (let i = 0, j = i + 1; i < this.matrixSize - 1; i++, j++) {
+        const tile1Key = this.matrix[row][i];
+        const tile2Key = this.matrix[row][j];
+        
+        const tile1Index = this.tiles.findIndex((item) => item.key === tile1Key && item.isVisible);
+        const tile2Index = this.tiles.findIndex((item) => item.key === tile2Key && item.isVisible);
+        
+        const tile1Value = this.tiles[tile1Index].value;
+        const tile2Value = this.tiles[tile2Index].value;
+        
+        if (tile1Value === tile2Value) {
+          console.log(`${i} ${j}`);
+          this.gameWasFailed = false;
+          return;
+        }
+      }
+    }
+
+    console.log('after horizontal check check')
+    for (let column = 0; column < this.matrixSize; column++) {
+      for (let i = 0, j = i + 1; i < this.matrixSize - 1; i++, j++) {
+        const tile1Key = this.matrix[i][column];
+        const tile2Key = this.matrix[j][column];
+
+        const tile1Index = this.tiles.findIndex((item) => item.key === tile1Key && item.isVisible);
+        const tile2Index = this.tiles.findIndex((item) => item.key === tile2Key && item.isVisible);
+          
+        const tile1Value = this.tiles[tile1Index].value;
+        const tile2Value = this.tiles[tile2Index].value;
+
+        if (tile1Value === tile2Value) {
+          this.gameWasFailed = false;
+          return;
+        }
+      }
+    }
+
+    console.log('after vertical check check')
+    this.gameWasFailed = true;
+    return;
   } 
 }

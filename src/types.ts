@@ -11,6 +11,8 @@ type BoardType = {
   tiles: TileType[],
   gameWasFailed: boolean,
   gameWasWon: boolean,
+  score: number,
+  isActiveGame: boolean,
 }
 
 type BoardMatrixType = (number | null)[][];
@@ -31,7 +33,9 @@ type GameConfigsType = {
 }
 
 type TileProps = {
-  tile: TileType
+  tile: TileType,
+  width: number,
+  height: number,
 }
 
 type TransitionTypes = {

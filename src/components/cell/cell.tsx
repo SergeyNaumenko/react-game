@@ -3,14 +3,20 @@ import './style.scss';
 type CellProps = {
   row: number,
   column: number,
+  width: number,
+  height: number,
 }
 
-const Cell = ({ row, column }:CellProps) => {
+const Cell = ({ row, column, width, height }:CellProps) => {
 
   const classes = `cell position_${row}_${column}`;
+  const spaceX = row === 0 ? 0 : 5;
+  const spaceY = column === 0 ? 0 : 5;
   const styles = {
-    top: `${11 * row + 0.5}rem`,
-    left: `${11 * column + 0.5}rem`,
+    top: `${(width + spaceX) * row}px`,
+    left: `${(height + spaceY) * column}px`,
+    width: `${width}px`,
+    height: `${height}px`,
   }
 
   return (
