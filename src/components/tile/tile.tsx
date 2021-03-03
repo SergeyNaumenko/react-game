@@ -1,0 +1,55 @@
+import { useContext, createRef } from 'react';
+import { Transition } from 'react-transition-group';
+import { TileProps, TransitionTypes, } from '../../types';
+import ConfigContext from '../configContext';
+import './style.scss';
+
+const Tile = ({tile, width, height}: TileProps) => {
+  const { animationSpeed } = useContext(ConfigContext);
+  const transitionStyles:TransitionTypes = {
+    entering: { opacity: 0 },
+    entered:  { opacity: 1 },
+    exiting:  { opacity: 0 },
+    exited:  { opacity: 0 },
+  };
+  const defaultStyle = {
+    transition: `all ${animationSpeed}ms ease-out`,
+  }
+  
+  const { row, column, value, isVisible } = tile;
+  const visible = isVisible ? 'visible' : '';
+  const classes = `tile position_${row}_${column} color-${value} ${visible}`;
+  const displayValue = value || '';
+
+  const spaceX = row === 0 ? 0 : 5;
+  const spaceY = column === 0 ? 0 : 5;
+
+  const styles = {
+    top: `${(width + spaceX) * row}px`,
+    left: `${(height + spaceY) * column}px`,
+    width: `${width}px`,
+    height: `${height}px`,
+  }
+
+  const wrapper = createRef();
+
+  return (
+    <Transition in={isVisible} appear={true} timeout={0}>
+      {(state) => (
+        <div className='tile-shadow color-'>
+          <div 
+            className={classes}
+            style={{
+              ...defaultStyle,
+              ...transitionStyles[state],
+              ...styles,
+          }}>
+            <span>{displayValue}</span>
+          </div>
+        </div>
+      )}
+    </Transition> 
+  )
+}
+
+export default Tile;

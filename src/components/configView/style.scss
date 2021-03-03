@@ -1,0 +1,10 @@
+@import '../../styles/colors.scss';
+@import '../../styles/common.scss';
+
+.modal-dialog {
+  font-size: 1.8rem;
+}
+
+.modal-content {
+  background-color: $main-background-color;
+}

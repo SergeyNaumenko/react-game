@@ -1,0 +1,17 @@
+@import './colors.scss';
+
+.custom-btn {
+  font-size: 1.8rem;
+  border-radius: 0.5rem;
+}
+
+.primary-btn {
+  background-color: $common-btn-color;
+  border: 0.3rem solid $common-btn-border-color;
+  user-select: none;
+
+  &:hover,&-active, &:focus {
+    background-color: $common-btn-color-active;
+    border: 0.3rem solid $common-btn-border-color;
+  }
+}
