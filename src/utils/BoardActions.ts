@@ -50,17 +50,14 @@ export default class BoardActions {
   }
 
   private shiftMatrixLeft = () => {
-    //console.log([...this.matrix])
     for (let row = 0; row < this.matrixSize; row++) {
       for (let i = 0; i < this.matrixSize - 1; i++) {
         for(let j = i + 1; j < this.matrixSize; j++) {
-          //console.log(`${i} ${j}`);
-
+    
           const tile1Key = this.matrix[row][i];
           const tile2Key = this.matrix[row][j];
           
           if (isNull(tile1Key) && !isNull(tile2Key)) {
-            //console.log('move to Null cell')
             this.matrix[row][i] = tile2Key;
             this.matrix[row][j] = null;
 
@@ -201,13 +198,11 @@ export default class BoardActions {
   private checkFailedStatus = () => {
     const hasNullCells = this.matrix.flat().findIndex((cell) => isNull(cell)) > -1;
 
-    console.log('check')
     if (hasNullCells) {
       this.gameWasFailed = false;
       return;
     }
 
-    console.log('after null check')
     for (let row = 0; row < this.matrixSize; row++) {
       for (let i = 0, j = i + 1; i < this.matrixSize - 1; i++, j++) {
         const tile1Key = this.matrix[row][i];
@@ -220,14 +215,12 @@ export default class BoardActions {
         const tile2Value = this.tiles[tile2Index].value;
         
         if (tile1Value === tile2Value) {
-          console.log(`${i} ${j}`);
           this.gameWasFailed = false;
           return;
         }
       }
     }
 
-    console.log('after horizontal check check')
     for (let column = 0; column < this.matrixSize; column++) {
       for (let i = 0, j = i + 1; i < this.matrixSize - 1; i++, j++) {
         const tile1Key = this.matrix[i][column];
@@ -246,7 +239,6 @@ export default class BoardActions {
       }
     }
 
-    console.log('after vertical check check')
     this.gameWasFailed = true;
     return;
   } 

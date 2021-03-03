@@ -2,20 +2,21 @@ import React, { useEffect, useState, useContext, useCallback, useMemo } from 're
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
+import {Howl} from 'howler';
 import { isNull } from 'util';
 import {
   KEY_LEFT,
   KEY_UP,
   KEY_RIGHT,
   KEY_DOWN,
+  LOCAL_STORAGE_GAME_STATE,
 } from '../../constants';
 import Cell from '../cell';
 import Tile from '../tile';
 import BoardActions  from '../../utils/BoardActions';
 import ConfigContext from '../configContext';
-import './style.scss';
 import { BoardType } from '../../types';
-import {Howl} from 'howler';
 import ResultView from '../resultView';
 
 type BoardProps = {
@@ -43,38 +44,57 @@ const Board = ({onFinish}:BoardProps) => {
     }),
   }), [soundEffectsVolume]);
 
-
-  const [board, setBoard] = useState<BoardType>({
+  const resetBoardValue = {
     matrix: cells,
     tiles: [],
     gameWasFailed: false,
     gameWasWon: false,
     score: 0,
     isActiveGame: true,
-  });
+  };
 
+  const getSavedGame = () => {
+    const gameStateStr = localStorage.getItem(LOCAL_STORAGE_GAME_STATE);
+    const gameStateObj = gameStateStr ? JSON.parse(gameStateStr) : [];
+    
+    if (gameStateObj.length > 0) {
+      const lastValue = gameStateObj.pop();
+    
+      if (lastValue.matrix.length === boardSize && lastValue.isActiveGame) {
+        return lastValue;
+      }
+    }
+    return resetBoardValue;
+  }
+
+  const [board, setBoard] = useState<BoardType>(resetBoardValue);
+
+  
+  const handleNewGame = () => {
+    setBoard(resetBoardValue);
+  }
+
+  const handleGameSave = () => {
+    const gameStateStr = localStorage.getItem(LOCAL_STORAGE_GAME_STATE);
+    const gameStateObj = gameStateStr ? JSON.parse(gameStateStr) : [];
+    localStorage.setItem(LOCAL_STORAGE_GAME_STATE, JSON.stringify([...gameStateObj, board]));
+  }
 
   useEffect(()=> {
-    setBoard({
-      matrix: Array(boardSize).fill(null).map(() => Array(boardSize).fill(null)),
-      tiles: [],
-      gameWasFailed: false,
-      gameWasWon: false,
-      score: 0,
-      isActiveGame: true,
-    })
+    setBoard(getSavedGame());
   }, [boardSize]);
 
   useEffect(() => {
+    handleGameSave();
+    
     if (!board.isActiveGame) {
       onFinish(board.score);
+      localStorage.removeItem(LOCAL_STORAGE_GAME_STATE);
     }
   }, [board.isActiveGame, board.score]);
 
   const makeAction = useCallback(
-    (direction: string) => {
-    
-      
+    (direction: string) => {  
       const {matrix, tiles, score} = board;
       const boardActions = new BoardActions(matrix, tiles, targetScore);
       const { 
@@ -167,9 +187,8 @@ const Board = ({onFinish}:BoardProps) => {
           { board.score }
         </Col>
         <Col className='d-flex justify-content-center'>
-          new  game
+          <Button className='primary-btn fs-3 rounded-pill' onClick={handleNewGame}>New  Game</Button>
         </Col>
-      
       </Row>
       <Row className=''>
         <Col className='d-flex justify-content-center'>
@@ -190,8 +209,7 @@ const Board = ({onFinish}:BoardProps) => {
         </Col>
       </Row>
     </Container>
-  )
-  
+  )  
 }
 
 export default Board;

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, createRef } from 'react';
 import { Transition } from 'react-transition-group';
 import { TileProps, TransitionTypes, } from '../../types';
 import ConfigContext from '../configContext';
@@ -23,7 +23,6 @@ const Tile = ({tile, width, height}: TileProps) => {
 
   const spaceX = row === 0 ? 0 : 5;
   const spaceY = column === 0 ? 0 : 5;
-  const fontSize = 0;
 
   const styles = {
     top: `${(width + spaceX) * row}px`,
@@ -31,8 +30,11 @@ const Tile = ({tile, width, height}: TileProps) => {
     width: `${width}px`,
     height: `${height}px`,
   }
+
+  const wrapper = createRef();
+
   return (
-    <Transition in={isVisible} appear={true} timeout={0} >
+    <Transition in={isVisible} appear={true} timeout={0}>
       {(state) => (
         <div className='tile-shadow color-'>
           <div 

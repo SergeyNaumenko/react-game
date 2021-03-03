@@ -17,7 +17,7 @@ const ScoreView = ({onModalShow}:any)=> {
           <th>Size</th>
         </tr>
       </thead>
-      <tbody>{JSON.parse(topResultsStr).results.map((result:any) => {
+      <tbody>{JSON.parse(topResultsStr).results.map((result:any, index:number) => {
         const {
           userName,
           score,
@@ -25,7 +25,7 @@ const ScoreView = ({onModalShow}:any)=> {
           boardSize
         } = result;
         return (
-        <tr>
+        <tr key={index}>
           <td>{userName}</td>
           <td>{score}</td>
           <td>{targetScore}</td>

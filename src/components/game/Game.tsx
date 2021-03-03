@@ -49,7 +49,6 @@ const Game = () => {
   }
 
   const handleFinishGame = (score: number) => {
-    console.log('score ' + score);
     const { userName, boardSize, targetScore } = config;
 
     const newResultObj = {
@@ -60,11 +59,9 @@ const Game = () => {
     }
     const topResultsStr = localStorage.getItem(LOCAL_STORAGE_TOP_RESULTS_NAME);
     if (!topResultsStr) {
-      console.log('set empty')
       localStorage.setItem(LOCAL_STORAGE_TOP_RESULTS_NAME, JSON.stringify({results: [newResultObj]}));
     } else {
       const { results } = JSON.parse(topResultsStr);
-      console.log(results)
       const newResults = [...results, newResultObj];
 
       newResults.sort((result1, result2) => {
@@ -79,16 +76,9 @@ const Game = () => {
       if (newResults.length > LOCAL_STORAGE_TOP_RESULTS_COUNT) {
         newResults.splice(LOCAL_STORAGE_TOP_RESULTS_COUNT)
       }
-      
-      console.log(newResultObj)
-      console.log(newResults)
-      console.log(results)
-
-
       localStorage.setItem(LOCAL_STORAGE_TOP_RESULTS_NAME, JSON.stringify({results: newResults}));
     }
   }
-
 
   const ConfigViewElement = isActiveConfigView ? <ConfigView onConfigChanged={handleConfigChange} onModalShow={handleConfigViewVisibility}/> : null;
   const ScoreViewElement = isActiveScoreView ? <ScoreView onModalShow={handleScoreViewVisibility}/> : null;

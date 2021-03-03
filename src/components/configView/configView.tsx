@@ -162,7 +162,7 @@ const ConfigView = ({onConfigChanged, onModalShow}:any) => {
                             autoComplete='off'
                             value={boardSize}
                             checked={config.boardSize === boardSize} 
-                            onChange={() => {console.log('onchange input')}}/>
+                            onChange={() => {}}/>
                           <label 
                             className={`btn btn-secondary custom-btn primary-btn ${config.boardSize === boardSize ? 'primary-btn-active' : ''}`} 
                             htmlFor={`boardSize${boardSize}`}

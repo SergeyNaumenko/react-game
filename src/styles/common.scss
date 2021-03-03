@@ -7,8 +7,11 @@
 
 .primary-btn {
   background-color: $common-btn-color;
+  border: 0.3rem solid $common-btn-border-color;
+  user-select: none;
 
-  &:hover,&-active {
+  &:hover,&-active, &:focus {
     background-color: $common-btn-color-active;
+    border: 0.3rem solid $common-btn-border-color;
   }
 }
