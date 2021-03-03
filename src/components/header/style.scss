@@ -16,5 +16,6 @@
 
   &:hover {
     background-color: $common-btn-color-active;
+    border: 0.3rem solid $common-btn-border-color;
   }
 }

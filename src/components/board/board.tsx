@@ -4,10 +4,10 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import { isNull } from 'util';
 import {
-  keyLeft,
-  keyUp,
-  keyRight,
-  keyDown,
+  KEY_LEFT,
+  KEY_UP,
+  KEY_RIGHT,
+  KEY_DOWN,
 } from '../../constants';
 import Cell from '../cell';
 import Tile from '../tile';
@@ -18,7 +18,11 @@ import { BoardType } from '../../types';
 import {Howl} from 'howler';
 import ResultView from '../resultView';
 
-const Board = () => {
+type BoardProps = {
+  onFinish: Function,
+}
+
+const Board = ({onFinish}:BoardProps) => {
   const { 
     boardSize, 
     targetScore, 
@@ -59,7 +63,13 @@ const Board = () => {
       score: 0,
       isActiveGame: true,
     })
-  }, [boardSize])
+  }, [boardSize]);
+
+  useEffect(() => {
+    if (!board.isActiveGame) {
+      onFinish(board.score);
+    }
+  }, [board.isActiveGame, board.score]);
 
   const makeAction = useCallback(
     (direction: string) => {
@@ -101,19 +111,19 @@ const Board = () => {
       
       if (board.isActiveGame) {
         switch (keyCode) {
-          case keyLeft: {
+          case KEY_LEFT: {
             makeAction('left');
             break;
           }
-          case keyUp: {
+          case KEY_UP: {
             makeAction('top');
             break;
           }
-          case keyRight: {
+          case KEY_RIGHT: {
             makeAction('right');
             break;
           }
-          case keyDown: {
+          case KEY_DOWN: {
             makeAction('down');
             break;
           }
